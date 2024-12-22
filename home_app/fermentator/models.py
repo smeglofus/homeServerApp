@@ -1,3 +1,9 @@
 from django.db import models
 
-# Create your models here.
+class SensorData(models.Model):
+    temperature = models.FloatField(default=155.0)
+    humidity = models.FloatField(default=155.0)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Temperature: {self.temperature}, Humidity: {self.humidity}"
