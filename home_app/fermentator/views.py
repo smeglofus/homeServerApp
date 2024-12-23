@@ -6,7 +6,7 @@ from .models import SensorData
 
 # Create your views here.
 def home(request):
-    data = SensorData.objects.all().order_by('-timestamp')  # Data seřazená podle času 
+    data = SensorData.objects.all().order_by('-timestamp')  # Data seřazená podle času #
     return render(request, 'home.html', {'data': data})
 
 @csrf_exempt  # Dočasně vypněte CSRF ochranu pro testování
