@@ -32,7 +32,7 @@ jobs:
         with:
           host: ${{ secrets.RASPBERRY_PI_IP }}
           username: ${{ secrets.RASPBERRY_PI_USER }}
-	  password: ${{ secrets.RASPBERRY_PI_PASSWORD }}
+	      password: ${{ secrets.RASPBERRY_PI_PASSWORD }}
           script: |
             docker pull smeglofus/home_app:latest
             docker-compose down
