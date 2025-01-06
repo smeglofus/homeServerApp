@@ -29,10 +29,12 @@ jobs:
       - name: Deploy on Raspberry Pi
         uses: appleboy/ssh-action@v0.1.5
         with:
-          host: ${{ secrets.RASPBERRY_PI_IP }}
+          host: ${{ secrets.RASPBERRY_PI_IP }}  # ujistěte se, že je zde správný formát
           username: ${{ secrets.RASPBERRY_PI_USER }}
           password: ${{ secrets.RASPBERRY_PI_PASSWORD }}
           script: |
+            sudo systemctl status ssh
+            docker info  # Ověřte, že Docker je spuštěn
             docker pull smeglofus/home_app:latest
             docker-compose down
             docker-compose up -d
