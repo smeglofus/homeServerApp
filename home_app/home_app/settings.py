@@ -76,10 +76,15 @@ WSGI_APPLICATION = 'home_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'dbname',
+        'USER': 'user',
+        'PASSWORD': 'password',
+        'HOST': 'db',  # název služby v docker-compose
+        'PORT': '5432',
     }
 }
+
 
 
 # Password validation

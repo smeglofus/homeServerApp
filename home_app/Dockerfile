@@ -1,6 +1,14 @@
 # Použití oficiálního Python image
 FROM python:3.11-slim
 
+# Instalace PostgreSQL knihoven
+RUN apt-get update && apt-get install -y \
+    libpq-dev \
+    gcc \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+
 # Nastavení pracovního adresáře v kontejneru
 WORKDIR /app
 
