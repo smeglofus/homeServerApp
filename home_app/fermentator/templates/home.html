@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Data ze senzoru</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -61,6 +62,11 @@
             background-color: #007acc;
             color: white;
         }
+        /* Styl pro graf */
+        .chart-container {
+            width: 80%;
+            margin: 30px auto;
+        }
     </style>
 </head>
 <body>
@@ -111,28 +117,81 @@
             {% endfor %}
         </tbody>
     </table>
-<script>
-    function updateDesiredTemp(change) {
-        fetch('/api/update_temp/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ change: change }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                location.reload();
-            } else {
-                alert("Chyba při aktualizaci teploty: " + data.message);
-            }
-        })
-        .catch(error => {
-            console.error("Chyba:", error);
-        });
-    }
-</script>
+
+    <!-- Graf -->
+    <div class="chart-container">
+        <canvas id="sensorChart"></canvas>
+    </div>
+
+    <script>
+        function updateDesiredTemp(change) {
+            fetch('/api/update_temp/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ change: change }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    location.reload();
+                } else {
+                    alert("Chyba při aktualizaci teploty: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error("Chyba:", error);
+            });
+        }
+
+        // Funkce pro načtení dat a vykreslení grafu
+        async function fetchData() {
+            const response = await fetch("{% url 'get_sensor_data' %}");
+            const data = await response.json();
+            return data;
+        }
+
+        async function renderChart() {
+            const data = await fetchData();
+
+            // Obrácení pořadí dat, aby nejnovější hodnoty byly vpravo
+            data.labels.reverse();
+            data.temperature.reverse();
+            data.humidity.reverse();
+
+            const ctx = document.getElementById('sensorChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [
+                        {
+                            label: 'Teplota (°C)',
+                            data: data.temperature,
+                            borderColor: 'red',
+                            fill: false
+                        },
+                        {
+                            label: 'Vlhkost (%)',
+                            data: data.humidity,
+                            borderColor: 'blue',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: { title: { display: true, text: 'Čas' } },
+                        y: { title: { display: true, text: 'Hodnota' } }
+                    }
+                }
+            });
+        }
+
+        renderChart();
+    </script>
 
 </body>
 </html>
