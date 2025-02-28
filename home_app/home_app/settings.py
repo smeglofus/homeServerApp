@@ -75,16 +75,27 @@ WSGI_APPLICATION = 'home_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'dbname',
-        'USER': 'user',
-        'PASSWORD': 'password',
-        'HOST': 'db',  # název služby v docker-compose
-        'PORT': '5432',
+import os
+# DJANGO_ENV=docker docker-compose up --build - pro build v produkci
+if os.getenv("DJANGO_ENV") == "docker":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': 'dbname',
+            'USER': 'user',
+            'PASSWORD': 'password',
+            'HOST': 'db',  # Název služby v docker-compose
+            'PORT': '5432',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / "db.sqlite3",
+        }
+    }
+
 
 
 

@@ -192,6 +192,51 @@
 
         renderChart();
     </script>
+<input type="text" id="ferment-name" placeholder="Zadejte název fermentace">
+<button id="fermentButton" class="btn btn-primary" onclick="toggleFermentation()">
+    {% if active_ferment %}
+        Deaktivovat fermentaci
+    {% else %}
+        Aktivovat fermentaci
+    {% endif %}
+</button>
+
+<script>
+function toggleFermentation() {
+    let button = document.getElementById("fermentButton");
+    let fermentName = document.getElementById("ferment-name").value.trim();
+    let isActive = button.innerText.includes("Deaktivovat");
+
+    if (!isActive && !fermentName) {
+        alert("Zadejte název fermentace!");
+        return;
+    }
+
+    fetch(isActive ? "/stop_fermentation/" : "/start_fermentation/", {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": "{{ csrf_token }}",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(isActive ? {} : { name: fermentName })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === "success") {
+            button.innerText = isActive ? "Aktivovat fermentaci" : "Deaktivovat fermentaci";
+        } else {
+            alert("Chyba: " + data.message);
+        }
+    })
+    .catch(error => console.error("Error:", error));
+}
+</script>
+
+
+
+
+
+
 
 </body>
 </html>
