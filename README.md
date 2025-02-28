@@ -68,4 +68,4 @@ Images of the physical fermentation box and UI will be added.
 
 ---
 
-🇨🇿 Pro českou verzi si přečtěte `README_CS.md`.
+🇨🇿 Pro českou verzi si přečtěte [README_CS.md](README_CS.md).
