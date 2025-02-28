@@ -34,7 +34,16 @@ Through the Django web application, you can:
 Create a `.env` file and configure:
 ```env
 SECRET_KEY=your-secret-key
-DJANGO_ENV=docker // local
+DJANGO_ENV=local/docker
+DEBUG=1
+DJANGO_ALLOWED_HOSTS=localhost
+DATABASE_URL=postgres://user:password@db:5432/dbname
+
+DB_NAME=dbname
+DB_USER=user
+DB_PASSWORD=password
+DB_HOST=db
+DB_PORT=5432
 ```
 
 ### 3️⃣ Start the Application
