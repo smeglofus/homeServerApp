@@ -10,10 +10,10 @@ services:
       - media_data:/app/media
     expose:
       - 8000
-    environment:
-      - DEBUG=1
-      - DJANGO_ALLOWED_HOSTS=localhost
-      - DATABASE_URL=postgres://user:password@db:5432/dbname
+    env_file:  # ✅ Načtení environmentálních proměnných z .env
+      - .env
+    depends_on:
+      - db
 
   nginx:
     image: nginx:latest
@@ -29,13 +29,12 @@ services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: dbname
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./entrypoint.sql:/docker-entrypoint-initdb.d/init.sql
-
 
   pgadmin:
     image: dpage/pgadmin4

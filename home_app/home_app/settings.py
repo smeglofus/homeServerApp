@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
+import os
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,7 +28,7 @@ SECRET_KEY = config("SECRET_KEY") # this is to replace the secret key you cut aw
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.100.84', 'localhost', '127.0.0.1', '192.168.100.108', '192.168.100.109']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -75,17 +77,21 @@ WSGI_APPLICATION = 'home_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
-import os
-# DJANGO_ENV=docker docker-compose up --build - pro build v produkci
+
+
+load_dotenv()  # ✅ Načtení .env souboru
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 if os.getenv("DJANGO_ENV") == "docker":
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
-            'NAME': 'dbname',
-            'USER': 'user',
-            'PASSWORD': 'password',
-            'HOST': 'db',  # Název služby v docker-compose
-            'PORT': '5432',
+            'NAME': os.getenv("DB_NAME"),
+            'USER': os.getenv("DB_USER"),
+            'PASSWORD': os.getenv("DB_PASSWORD"),
+            'HOST': os.getenv("DB_HOST"),
+            'PORT': os.getenv("DB_PORT"),
         }
     }
 else:
@@ -95,6 +101,7 @@ else:
             'NAME': BASE_DIR / "db.sqlite3",
         }
     }
+
 
 
 
