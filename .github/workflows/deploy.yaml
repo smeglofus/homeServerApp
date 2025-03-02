@@ -17,7 +17,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: 192.168.100.109
-          username: ${{ secrets.RASPBERRY_PI_USER }}
+          username: dell
           key: ${{ secrets.RASPBERRY_PI_SSH_KEY }}
           script: |
             # Navigate to your project directory
