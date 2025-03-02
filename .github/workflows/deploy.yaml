@@ -16,7 +16,7 @@ jobs:
       - name: Deploy on Raspberry Pi
         uses: appleboy/ssh-action@v0.1.5
         with:
-          host: ${{ secrets.RASPBERRY_PI_IP }}
+          host: 192.168.100.109
           username: ${{ secrets.RASPBERRY_PI_USER }}
           password: ${{ secrets.RASPBERRY_PI_PASSWORD }}
           script: |
