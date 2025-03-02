@@ -26,6 +26,7 @@ jobs:
             # Pull the latest changes
             git pull origin main # Make sure this matches the branch you're pushing to
 
+            cd home_app/
             # Build the Docker image
             docker build -t smeglofus/home_app:latest .
 
