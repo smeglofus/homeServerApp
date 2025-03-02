@@ -17,8 +17,10 @@ class SensorData(models.Model):
         FermentBatch,
         on_delete=models.SET_NULL,
         null=True,
-        blank=True  # Pokud není aktivní proces, může být NULL
+        blank=True,
+        related_name='sensor_data'  # Přidáno pro zpřístupnění dat
     )
 
     def __str__(self):
         return f"Temp: {self.temperature}, Humidity: {self.humidity}, Batch: {self.ferment_batch}"
+

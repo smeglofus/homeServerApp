@@ -72,5 +72,24 @@
             Aktivovat fermentaci
         {% endif %}
     </button>
+
+<!-- Rozbalovací seznam pro výběr várky -->
+<select id="batchSelect" onchange="renderBatchChartForSelected()">
+    <option value="">Vyberte várku</option>
+    {% for batch in ferment_batches %}
+        <option value="{{ batch.id }}">{{ batch.name }}</option>
+    {% endfor %}
+</select>
+
+<button id="deleteButton" class="btn btn-danger" onclick="deleteSelectedBatch()">Smazat vybranou várku</button>
+
+
+
+
+
+    <!-- Canvas pro graf vybrané várky -->
+    <div class="chart-container">
+        <canvas id="selectedBatchChart"></canvas>
+    </div>
 </body>
 </html>
