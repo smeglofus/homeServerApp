@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.RASPBERRY_PI_PASSWORD }}
           script: |
             # Navigate to your project directory
-            cd /path/to/your/project
+            cd /homeapp/homeServerApp
 
             # Pull the latest changes
             git pull origin main # Make sure this matches the branch you're pushing to
