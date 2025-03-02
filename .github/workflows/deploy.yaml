@@ -19,6 +19,7 @@ jobs:
           host: 192.168.100.109
           username: ${{ secrets.RASPBERRY_PI_USER }}
           password: ${{ secrets.RASPBERRY_PI_PASSWORD }}
+          port: 22
           script: |
             # Navigate to your project directory
             cd /homeapp/homeServerApp
