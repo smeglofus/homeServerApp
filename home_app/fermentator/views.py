@@ -30,15 +30,13 @@ def receive_data(request):
 
             # Získání aktivní fermentační várky
             active_batch = FermentBatch.objects.filter(is_active=True).first()
-            if not active_batch:
-                return JsonResponse({'status': 'error', 'message': 'No active fermentation batch found!'})
 
-            # Uložení dat s napojením na aktivní várku
+            # Uložení dat, pokud není aktivní várka, ferment_batch bude None
             sensor_data = SensorData.objects.create(
                 temperature=data['temperature'],
                 humidity=data['humidity'],
                 desired_temp=data['desired_temp'],
-                ferment_batch=active_batch
+                ferment_batch=active_batch  # Uložení aktivní várky, nebo None
             )
 
             return JsonResponse({'status': 'success'})
@@ -46,6 +44,7 @@ def receive_data(request):
             return JsonResponse({'status': 'error', 'message': str(e)})
 
     return JsonResponse({'status': 'invalid_request'})
+
 
 
 # 🔥 Spuštění fermentace
