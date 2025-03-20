@@ -15,6 +15,7 @@ services:
   db:
     image: postgres:13
     environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
       POSTGRES_USER: user          # Zde definuj uživatelské jméno
       POSTGRES_PASSWORD: password     # Zde definuj heslo
       POSTGRES_DB: sensordata           # Zde definuj název databáze
