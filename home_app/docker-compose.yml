@@ -48,7 +48,8 @@ services:
 
   mqtt_to_db:
     build:
-      context: ./mqtt_to_db
+      context: .
+      dockerfile: mqtt_to_db/Dockerfile
     depends_on:
       - mosquitto
       - db
