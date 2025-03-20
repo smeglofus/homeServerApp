@@ -15,9 +15,9 @@ services:
   db:
     image: postgres:13
     environment:
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: user          # Zde definuj uživatelské jméno
+      POSTGRES_PASSWORD: password     # Zde definuj heslo
+      POSTGRES_DB: sensordata           # Zde definuj název databáze
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./entrypoint.sql:/docker-entrypoint-initdb.d/init.sql
