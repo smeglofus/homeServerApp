@@ -1,34 +1,56 @@
 import paho.mqtt.client as mqtt
-import psycopg2
+from influxdb_client import InfluxDBClient, Point, WritePrecision
+import json
 import os
 
-# Připojení k PostgreSQL
-conn = psycopg2.connect(
-    dbname=os.getenv("DB_NAME"),
-    user=os.getenv("DB_USER"),
-    password=os.getenv("DB_PASSWORD"),
-    host="db",
-    port=5432
-)
-cur = conn.cursor()
+# MQTT nastavení
+MQTT_BROKER = os.getenv("MQTT_BROKER", "mosquitto")  # Název kontejneru
+MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
+MQTT_TOPIC = os.getenv("MQTT_TOPIC", "senzory/data")
 
-# MQTT callback pro příjem zpráv
+# InfluxDB nastavení
+INFLUXDB_URL = os.getenv("INFLUXDB_URL", "http://influxdb:8086")
+INFLUXDB_TOKEN = os.getenv("INFLUXDB_TOKEN", "moj-token")  # Nastav svůj API token
+INFLUXDB_ORG = os.getenv("INFLUXDB_ORG", "moje-org")
+INFLUXDB_BUCKET = os.getenv("INFLUXDB_BUCKET", "sensordata")
+
+# Připojení k InfluxDB
+client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
+write_api = client.write_api(write_options=WritePrecision.NS)
+
+
+# Callback při připojení k MQTT brokeru
+def on_connect(client, userdata, flags, rc):
+    print(f"✅ Připojeno k MQTT brokeru: {MQTT_BROKER}:{MQTT_PORT}")
+    client.subscribe(MQTT_TOPIC)
+
+
+# Callback při příjmu zprávy z MQTT
 def on_message(client, userdata, msg):
     try:
-        topic = msg.topic
-        payload = msg.payload.decode()
+        payload = json.loads(msg.payload.decode("utf-8"))
+        print(f"📥 Přijatá data: {payload}")
 
-        if topic == "fermentace/senzory":
-            temp, humidity = map(float, payload.split(","))
-            cur.execute("INSERT INTO sensor_data (temperature, humidity) VALUES (%s, %s)", (temp, humidity))
-            conn.commit()
-            print(f"Uloženo: Teplota={temp}°C, Vlhkost={humidity}%")
+        # Extrahuj hodnoty
+        temperature = payload.get("temperature")
+        humidity = payload.get("humidity")
+
+        # Vytvoř bod pro InfluxDB
+        point = Point("sensor_data").field("temperature", temperature).field("humidity", humidity)
+
+        # Zapiš do InfluxDB
+        write_api.write(bucket=INFLUXDB_BUCKET, org=INFLUXDB_ORG, record=point)
+        print("✅ Data uložena do InfluxDB")
+
     except Exception as e:
-        print(f"Chyba: {e}")
+        print(f"❌ Chyba při zpracování dat: {e}")
+
+
+# Nastavení MQTT klienta
+mqtt_client = mqtt.Client()
+mqtt_client.on_connect = on_connect
+mqtt_client.on_message = on_message
 
 # Připojení k MQTT brokeru
-mqtt_client = mqtt.Client()
-mqtt_client.on_message = on_message
-mqtt_client.connect("mosquitto", 1883)
-mqtt_client.subscribe("fermentace/senzory")
+mqtt_client.connect(MQTT_BROKER, MQTT_PORT, 60)
 mqtt_client.loop_forever()
