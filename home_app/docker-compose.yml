@@ -24,6 +24,7 @@ services:
       - DOCKER_INFLUXDB_INIT_ORG=moje-org
       - DOCKER_INFLUXDB_INIT_BUCKET=sensordata
       - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=moj-token
+      - DOCKER_INFLUXDB_HTTP_AUTH_ENABLED=false
     volumes:
       - influxdb_data:/var/lib/influxdb2
 
