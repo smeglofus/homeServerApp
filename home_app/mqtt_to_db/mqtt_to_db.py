@@ -1,13 +1,12 @@
 import paho.mqtt.client as mqtt
-from influxdb_client import InfluxDBClient, Point, WritePrecision, WriteOptions
-
+from influxdb_client import InfluxDBClient, Point, WriteOptions
 import json
 import os
 
 # MQTT nastavení
 MQTT_BROKER = os.getenv("MQTT_BROKER", "mosquitto")  # Název kontejneru
 MQTT_PORT = int(os.getenv("MQTT_PORT", 1883))
-MQTT_TOPIC = os.getenv("MQTT_TOPIC", "senzory/data")
+MQTT_TOPIC = os.getenv("MQTT_TOPIC", "fermentace/senzory")  # Ujisti se, že je to správný topic
 
 # InfluxDB nastavení
 INFLUXDB_URL = os.getenv("INFLUXDB_URL", "http://influxdb:8086")
@@ -19,22 +18,21 @@ INFLUXDB_BUCKET = os.getenv("INFLUXDB_BUCKET", "sensordata")
 client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
 write_api = client.write_api(write_options=WriteOptions(batch_size=500, flush_interval=1000))
 
-
 # Callback při připojení k MQTT brokeru
 def on_connect(client, userdata, flags, rc):
     print(f"✅ Připojeno k MQTT brokeru: {MQTT_BROKER}:{MQTT_PORT}")
     client.subscribe(MQTT_TOPIC)
 
-
 # Callback při příjmu zprávy z MQTT
 def on_message(client, userdata, msg):
     try:
-        payload = json.loads(msg.payload.decode("utf-8"))
+        payload = msg.payload.decode("utf-8")
         print(f"📥 Přijatá data: {payload}")
 
         # Extrahuj hodnoty
-        temperature = payload.get("temperature")
-        humidity = payload.get("humidity")
+        data = json.loads(payload)
+        temperature = data.get("temperature")
+        humidity = data.get("humidity")
 
         # Vytvoř bod pro InfluxDB
         point = Point("sensor_data").field("temperature", temperature).field("humidity", humidity)
@@ -45,7 +43,6 @@ def on_message(client, userdata, msg):
 
     except Exception as e:
         print(f"❌ Chyba při zpracování dat: {e}")
-
 
 # Nastavení MQTT klienta
 mqtt_client = mqtt.Client()
