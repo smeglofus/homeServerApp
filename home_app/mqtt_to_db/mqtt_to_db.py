@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
-from influxdb_client import InfluxDBClient, Point, WritePrecision
+from influxdb_client import InfluxDBClient, Point, WritePrecision, WriteOptions
+
 import json
 import os
 
@@ -16,7 +17,7 @@ INFLUXDB_BUCKET = os.getenv("INFLUXDB_BUCKET", "sensordata")
 
 # Připojení k InfluxDB
 client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG)
-write_api = client.write_api(write_options=WritePrecision.NS)
+write_api = client.write_api(write_options=WriteOptions(batch_size=500, flush_interval=1000))
 
 
 # Callback při připojení k MQTT brokeru
