@@ -18,12 +18,10 @@ client = InfluxDBClient(url=INFLUXDB_URL, token=INFLUXDB_TOKEN, org=INFLUXDB_ORG
 write_api = client.write_api(write_options=WriteOptions(batch_size=500, flush_interval=1000))
 
 # Callback při připojení k MQTT brokeru
-def on_connect(client, userdata, flags, rc):
-    if rc == 0:
-        print(f"✅ Připojeno k MQTT brokeru: {MQTT_BROKER}:{MQTT_PORT}")
-        client.subscribe(MQTT_TOPIC)
-    else:
-        print(f"❌ Chyba připojení k MQTT, kód: {rc}")
+def on_connect(client, userdata, flags, rc, properties=None):  # Přidán pátý argument `properties`
+    print(f"✅ Připojeno k MQTT brokeru: {MQTT_BROKER}:{MQTT_PORT}")
+    client.subscribe(MQTT_TOPIC)
+
 
 # Callback při příjmu zprávy z MQTT
 def on_message(client, userdata, msg):
