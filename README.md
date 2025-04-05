@@ -52,7 +52,7 @@ docker-compose up --build
 ```
 
 ### 4️⃣ Access the Application
-- **Web App**: `http://localhost:8000`
+- **Web App**: `http://localhost:80`
 - **PgAdmin**: `http://localhost:5050`
 
 ## 📋 TODO
